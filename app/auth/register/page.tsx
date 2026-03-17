@@ -12,6 +12,7 @@ import {
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { setAuthCookieAndRedirect } from "@/lib/auth";
+import { registerUserInDB, upsertUserInDB } from "@/lib/userService";
 
 interface FormData {
   username: string;
@@ -31,13 +32,33 @@ export default function RegisterPage() {
 
   const onSubmit: SubmitHandler<FormData> = async (data) => {
     setLoading(true);
+    let createdUser: any = null;
     try {
+      // 1. Create the Firebase account
       const userCred = await createUserWithEmailAndPassword(
         auth,
         data.email,
         data.password
       );
-      await updateProfile(userCred.user, { displayName: data.username });
+      createdUser = userCred.user;
+      await updateProfile(createdUser, { displayName: data.username });
+
+      // 2. Persist user in MongoDB via the backend
+      try {
+        await registerUserInDB({
+          username: data.username,
+          email: data.email,
+          firebaseUid: createdUser.uid,
+          photoURL: createdUser.photoURL || "",
+        });
+      } catch (dbError: any) {
+        // Rollback Firebase user if DB save fails to maintain consistency
+        if (createdUser) {
+          await createdUser.delete();
+        }
+        throw new Error(dbError.message || "Failed to sync user with database");
+      }
+
       toast.success("Account created! Welcome aboard 🎉");
       setAuthCookieAndRedirect("/");
     } catch (error: any) {
@@ -46,7 +67,7 @@ export default function RegisterPage() {
           ? "This email is already registered"
           : error.code === "auth/weak-password"
             ? "Password is too weak (min 6 characters)"
-            : "Registration failed. Please try again.";
+            : error.message || "Registration failed. Please try again.";
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -55,13 +76,27 @@ export default function RegisterPage() {
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
+    let createdUser: any = null;
     try {
       const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      createdUser = result.user;
+
+      try {
+        await upsertUserInDB({
+          username: createdUser.displayName || createdUser.email?.split("@")[0] || "Guest",
+          email: createdUser.email!,
+          firebaseUid: createdUser.uid,
+          photoURL: createdUser.photoURL || "",
+        });
+      } catch (dbError: any) {
+        throw new Error(dbError.message || "Failed to sync user with database");
+      }
+
       toast.success("Account created! Welcome aboard 🎉");
       setAuthCookieAndRedirect("/");
     } catch (error: any) {
-      toast.error("Google sign-up failed. Please try again.");
+      toast.error(error.message || "Google sign-up failed. Please try again.");
       console.error(error);
     } finally {
       setLoading(false);
@@ -69,37 +104,31 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="auth-page">
-      {/* Animated background blobs */}
-      <div className="blob blob-1" />
-      <div className="blob blob-2" />
-      <div className="blob blob-3" />
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden text-zinc-300">
+      {/* Ambient backgrounds */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-[#e8845c] rounded-full blur-[120px] opacity-[0.05] pointer-events-none" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40vw] h-[40vw] max-w-[500px] max-h-[500px] bg-[#f5c27a] rounded-full blur-[120px] opacity-[0.03] pointer-events-none" />
 
-      <div className="auth-container">
-        {/* Brand / Logo */}
-        <div className="auth-brand">
-          <div className="brand-icon">
-            <ChefHat size={28} strokeWidth={1.8} />
+      <div className="w-full max-w-md relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="flex flex-col items-center justify-center mb-8">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#e8845c] to-[#c96a41] flex items-center justify-center text-white shadow-lg shadow-[#e8845c]/30 mb-4">
+            <ChefHat size={28} strokeWidth={2} />
           </div>
-          <span className="brand-name">Saveur</span>
+          <span className="font-serif text-3xl font-bold text-white tracking-wide">Saveur</span>
         </div>
 
-        <div className="auth-card">
-          <div className="auth-header">
-            <h1 className="auth-title">Create your account</h1>
-            <p className="auth-subtitle">
-              Join us and discover exquisite flavors
-            </p>
+        <div className="bg-[#111111] border border-zinc-800/80 rounded-3xl p-8 shadow-2xl">
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-white mb-2">Create your account</h1>
+            <p className="text-zinc-500 text-sm">Join us and discover exquisite flavors</p>
           </div>
 
-          {/* Google Button */}
           <button
-            id="google-register-btn"
             onClick={handleGoogleSignIn}
             disabled={loading}
-            className="google-btn"
+            className="w-full flex items-center justify-center gap-3 bg-zinc-900 border border-zinc-800 hover:bg-zinc-800 text-white font-medium py-3 rounded-xl transition-all disabled:opacity-50"
           >
-            <svg className="google-icon" viewBox="0 0 24 24">
+            <svg viewBox="0 0 24 24" className="w-5 h-5">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
               <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
@@ -108,107 +137,88 @@ export default function RegisterPage() {
             Continue with Google
           </button>
 
-          {/* Divider */}
-          <div className="auth-divider">
-            <div className="divider-line" />
-            <span className="divider-text">or continue with email</span>
-            <div className="divider-line" />
+          <div className="flex items-center gap-4 my-6">
+            <div className="flex-1 border-t border-zinc-800/80"></div>
+            <span className="text-xs font-medium text-zinc-500 uppercase tracking-widest">or</span>
+            <div className="flex-1 border-t border-zinc-800/80"></div>
           </div>
 
-          {/* Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="auth-form">
-            {/* Full Name */}
-            <div className="form-group">
-              <label htmlFor="register-name" className="form-label">Full Name</label>
-              <div className="input-wrapper">
-                <User className="input-icon" size={18} />
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+            <div>
+              <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Full Name</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <User className="text-zinc-500" size={18} />
+                </div>
                 <input
-                  id="register-name"
                   type="text"
                   placeholder="Gordon Ramsay"
                   {...register("username", { required: "Name is required" })}
-                  className={`form-input ${errors.username ? "input-error" : ""}`}
+                  className={`w-full bg-[#0a0a0a] border ${errors.username ? 'border-red-500' : 'border-zinc-800'} rounded-xl py-3 pl-11 pr-4 text-white placeholder-zinc-700 focus:outline-none focus:border-[#e8845c] transition-colors`}
                 />
               </div>
-              {errors.username && (
-                <span className="error-msg">{errors.username.message}</span>
-              )}
+              {errors.username && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.username.message}</p>}
             </div>
 
-            {/* Email */}
-            <div className="form-group">
-              <label htmlFor="register-email" className="form-label">Email address</label>
-              <div className="input-wrapper">
-                <Mail className="input-icon" size={18} />
+            <div>
+              <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Email Address</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Mail className="text-zinc-500" size={18} />
+                </div>
                 <input
-                  id="register-email"
                   type="email"
                   placeholder="chef@example.com"
                   {...register("email", { required: "Email is required" })}
-                  className={`form-input ${errors.email ? "input-error" : ""}`}
+                  className={`w-full bg-[#0a0a0a] border ${errors.email ? 'border-red-500' : 'border-zinc-800'} rounded-xl py-3 pl-11 pr-4 text-white placeholder-zinc-700 focus:outline-none focus:border-[#e8845c] transition-colors`}
                 />
               </div>
-              {errors.email && (
-                <span className="error-msg">{errors.email.message}</span>
-              )}
+              {errors.email && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.email.message}</p>}
             </div>
 
-            {/* Password */}
-            <div className="form-group">
-              <label htmlFor="register-password" className="form-label">Password</label>
-              <div className="input-wrapper">
-                <Lock className="input-icon" size={18} />
+            <div>
+              <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">Password</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <Lock className="text-zinc-500" size={18} />
+                </div>
                 <input
-                  id="register-password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  {...register("password", {
-                    required: "Password is required",
-                    minLength: { value: 6, message: "Min 6 characters" },
-                  })}
-                  className={`form-input ${errors.password ? "input-error" : ""}`}
+                  {...register("password", { required: "Password is required", minLength: { value: 6, message: "Min 6 characters" } })}
+                  className={`w-full bg-[#0a0a0a] border ${errors.password ? 'border-red-500' : 'border-zinc-800'} rounded-xl py-3 pl-11 pr-12 text-white placeholder-zinc-700 focus:outline-none focus:border-[#e8845c] transition-colors`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="toggle-password"
-                  aria-label="Toggle password visibility"
+                  className="absolute inset-y-0 right-0 pr-4 flex items-center text-zinc-500 hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.password && (
-                <span className="error-msg">{errors.password.message}</span>
-              )}
+              {errors.password && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.password.message}</p>}
             </div>
 
             <button
-              id="register-submit-btn"
               type="submit"
               disabled={loading}
-              className="auth-submit-btn"
+              className="w-full py-3.5 bg-gradient-to-r from-[#e8845c] to-[#c96a41] text-white font-bold rounded-xl shadow-lg shadow-[#e8845c]/20 hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 mt-2 flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <span className="btn-loading">
-                  <span className="spinner" />
-                  Creating account...
-                </span>
-              ) : (
-                "Create Account"
-              )}
+              {loading && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+              {loading ? "Creating account..." : "Create Account"}
             </button>
           </form>
 
-          <p className="auth-footer-text">
+          <p className="text-center text-sm text-zinc-500 mt-8">
             Already have an account?{" "}
-            <Link href="/auth/login" className="auth-link">
+            <Link href="/auth/login" className="text-[#e8845c] font-bold hover:underline">
               Sign in
             </Link>
           </p>
         </div>
-
-        <p className="auth-tagline">
-          🍴 Fresh ingredients, authentic flavors, unforgettable dining.
+        
+        <p className="text-center text-xs text-zinc-600 font-medium uppercase tracking-widest mt-8">
+          Fresh ingredients • Authentic flavors
         </p>
       </div>
     </div>
