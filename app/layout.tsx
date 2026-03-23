@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FirebaseAuthProvider } from "@/providers/FirebaseAuthProvider";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import QueryProvider from "@/providers/QueryProvider";
+import MenuProvider from "@/providers/MenuProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -33,14 +34,16 @@ export default function RootLayout({
       <body className={`${inter.variable} ${playfair.variable} antialiased`}>
         <QueryProvider>
           <FirebaseAuthProvider>
-            <NavbarWrapper />
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              hideProgressBar={false}
-              theme="dark"
-            />
-            {children}
+            <MenuProvider>
+              <NavbarWrapper />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                theme="dark"
+              />
+              {children}
+            </MenuProvider>
           </FirebaseAuthProvider>
         </QueryProvider>
       </body>

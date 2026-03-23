@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Edit, Trash, Eye, EyeOff } from "lucide-react";
 import { Item } from "@/lib/api";
 import api from "@/lib/axios";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
+import MenuContext from "@/app/context/menuContext";
 
 interface MenuItemCardProps {
   item: Item;
@@ -11,8 +12,9 @@ interface MenuItemCardProps {
 }
 
 export default function MenuItemCard({ item, onDelete }: MenuItemCardProps) {
-  const categoryName = typeof item.category === "object" ? item.category.name : "Unknown Category";
+  const categoryName = typeof item.category === "object" ? item.category?.name : "Unknown Category";
   const queryClient = useQueryClient();
+  const { refetchMenu } = useContext(MenuContext)!;
 
   const toggleShowInMenu = async () => {
     try {
@@ -20,6 +22,7 @@ export default function MenuItemCard({ item, onDelete }: MenuItemCardProps) {
         showInMenu: !item.showInMenu,
       });
       queryClient.invalidateQueries({ queryKey: ["items"] });
+      refetchMenu();
       toast.success(`Item is now ${!item.showInMenu ? 'visible' : 'hidden'} on the menu!`);
     } catch (err: any) {
       toast.error(err.response?.data?.message || err.message || "Failed to update item visibility");

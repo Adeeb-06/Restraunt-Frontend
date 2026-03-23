@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import api from "@/lib/axios";
 import { isAxiosError } from "axios";
+import MenuContext from "@/app/context/menuContext";
 
 interface CategoryFormValues {
   name: string;
@@ -37,6 +38,7 @@ export default function CategoryModal({
     },
   });
 
+    const {refetchMenu} = useContext(MenuContext)!
   useEffect(() => {
     if (!isOpen) {
       reset();
@@ -53,6 +55,7 @@ export default function CategoryModal({
         toast.success("Category created successfully!");
         onSuccess();
         refetchCategories();
+        refetchMenu();
       }
     } catch (error) {
       if (isAxiosError(error)) {

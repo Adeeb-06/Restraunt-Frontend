@@ -8,12 +8,14 @@ interface AuthContextType {
   firebaseUser: User | null;
   dbUser: BackendUser | null;
   authLoading: boolean;
+  setDbUser: React.Dispatch<React.SetStateAction<BackendUser | null>>;
 }
 
 const AuthContext = createContext<AuthContextType>({
   firebaseUser: null,
   dbUser: null,
   authLoading: true,
+  setDbUser: () => {},
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -50,7 +52,7 @@ export const FirebaseAuthProvider = ({
   }, []);
 
   return (
-    <AuthContext.Provider value={{ firebaseUser, dbUser, authLoading }}>
+    <AuthContext.Provider value={{ firebaseUser, dbUser, authLoading, setDbUser }}>
       {children}
     </AuthContext.Provider>
   );

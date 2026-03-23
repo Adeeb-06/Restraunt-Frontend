@@ -1,10 +1,12 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import { Loader2, UploadCloud } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import api from "@/lib/axios";
 import { isAxiosError } from "axios";
 import { Category } from "@/lib/api";
+import MenuContext from "@/app/context/menuContext";
+import { useAuth } from "@/providers/FirebaseAuthProvider";
 
 interface MenuItemModalProps {
   isOpen: boolean;
@@ -32,6 +34,10 @@ export default function MenuItemModal({
   const [uploadingImage, setUploadingImage] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const {refetchMenu} = useContext(MenuContext)!
+  const { dbUser } = useAuth();
+  const isImageNeeded = dbUser?.itemImageEnabled ?? true;
 
   const {
     register,
@@ -102,7 +108,7 @@ export default function MenuItemModal({
   };
 
   const onSubmit = async (data: ItemFormValues) => {
-    if (!data.image) return toast.error("Please upload an image for your menu item");
+    if (isImageNeeded && !data.image) return toast.error("Please upload an image for your menu item");
 
     try {
       const payload = {
@@ -115,6 +121,7 @@ export default function MenuItemModal({
       if (res.status === 201 || res.status === 200) {
         toast.success("Item created successfully!");
         onSuccess();
+        refetchMenu();
       }
     } catch (error) {
       if (isAxiosError(error)) {
@@ -138,46 +145,48 @@ export default function MenuItemModal({
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-5">
           {/* Image Upload */}
-          <div>
-            <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
-              Dish Image
-            </label>
-            <div
-              className={`w-full h-40 bg-[#111111] border-2 border-dashed ${errors.image ? 'border-red-500' : 'border-zinc-800 hover:border-[#e8845c]'} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors relative overflow-hidden group`}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {imagePreview ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-              ) : (
-                <>
-                  <UploadCloud size={32} className="text-zinc-600 group-hover:text-[#e8845c] mb-2 transition-colors" />
-                  <span className="text-sm font-medium text-zinc-400">Click to upload image</span>
-                  <span className="text-xs text-zinc-600 mt-1">Recommended: 800x600px max 5MB</span>
-                </>
-              )}
+          {isImageNeeded && (
+            <div>
+              <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                Dish Image
+              </label>
+              <div
+                className={`w-full h-40 bg-[#111111] border-2 border-dashed ${errors.image ? 'border-red-500' : 'border-zinc-800 hover:border-[#e8845c]'} rounded-xl flex flex-col items-center justify-center cursor-pointer transition-colors relative overflow-hidden group`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                {imagePreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                ) : (
+                  <>
+                    <UploadCloud size={32} className="text-zinc-600 group-hover:text-[#e8845c] mb-2 transition-colors" />
+                    <span className="text-sm font-medium text-zinc-400">Click to upload image</span>
+                    <span className="text-xs text-zinc-600 mt-1">Recommended: 800x600px max 5MB</span>
+                  </>
+                )}
 
-              {uploadingImage && (
-                <div className="absolute inset-0 bg-[#0a0a0a]/80 backdrop-blur-sm flex flex-col items-center justify-center text-[#e8845c] font-medium text-sm">
-                  <Loader2 size={24} className="animate-spin mb-2" />
-                  Uploading...
-                </div>
+                {uploadingImage && (
+                  <div className="absolute inset-0 bg-[#0a0a0a]/80 backdrop-blur-sm flex flex-col items-center justify-center text-[#e8845c] font-medium text-sm">
+                    <Loader2 size={24} className="animate-spin mb-2" />
+                    Uploading...
+                  </div>
+                )}
+              </div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                onChange={handleImageUpload}
+                disabled={uploadingImage}
+              />
+              {(!imageValue && errors.image) && (
+                   <span className="text-red-500 text-xs mt-1">Image is required</span>
               )}
+              {/* hidden input for react hook form validation trick */}
+              <input type="hidden" {...register("image", { required: "Please upload an image" })} />
             </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept="image/*"
-              onChange={handleImageUpload}
-              disabled={uploadingImage}
-            />
-            {(!imageValue && errors.image) && (
-                 <span className="text-red-500 text-xs mt-1">Image is required</span>
-            )}
-            {/* hidden input for react hook form validation trick */}
-            <input type="hidden" {...register("image", { required: "Please upload an image" })} />
-          </div>
+          )}
 
           {/* Basic Info */}
           <div className="grid grid-cols-2 gap-4">

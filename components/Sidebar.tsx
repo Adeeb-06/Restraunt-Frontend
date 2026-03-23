@@ -136,7 +136,7 @@ export default function Sidebar() {
           {!isCollapsed && (
             <div className="flex-1 min-w-0">
               <p className="text-xl font-medium text-white truncate">
-                {dbUser?.username || "Loading..."}
+                {dbUser?.restrauntName || "Loading..."}
               </p>
               <p className="text-xs text-gray-400 uppercase tracking-widest truncate mt-1">
                 {dbUser?.role || "Guest"}

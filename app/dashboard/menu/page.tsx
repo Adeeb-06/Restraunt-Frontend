@@ -8,12 +8,31 @@ import MenuItemCard from "@/components/dashboard/menu/MenuItemCard";
 import MenuItemModal from "@/components/dashboard/menu/MenuItemModal";
 import api from "@/lib/axios";
 import { Item, Category } from "@/lib/api"; // Types
+import { updateUserSettingsInDB } from "@/lib/userService";
+import { getIdToken } from "firebase/auth";
 
 export default function MenuItemsPage() {
-  const { firebaseUser, dbUser } = useAuth();
+  const { firebaseUser, dbUser, setDbUser } = useAuth();
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isUpdatingSetting, setIsUpdatingSetting] = useState(false);
+
+  const toggleImageRequired = async () => {
+    if (!firebaseUser || !dbUser) return;
+    setIsUpdatingSetting(true);
+    try {
+      const token = await getIdToken(firebaseUser);
+      const newSetting = !(dbUser.itemImageEnabled ?? true);
+      const res = await updateUserSettingsInDB(dbUser.email, token, { itemImageEnabled: newSetting });
+      setDbUser(res.user);
+      toast.success(newSetting ? "Item images are now required." : "Item images are now optional/hidden.");
+    } catch (err: any) {
+      toast.error("Failed to update setting");
+    } finally {
+      setIsUpdatingSetting(false);
+    }
+  };
 
   // Queries
   const { data: items = [], isLoading: itemsLoading , refetch: refetchItems } = useQuery({
@@ -77,6 +96,22 @@ export default function MenuItemsPage() {
           </p>
         </div>
         <div className="flex items-center gap-4 mt-4 sm:mt-0 w-full sm:w-auto">
+          <div className="flex items-center gap-2 mr-2">
+            <span className="text-sm text-zinc-400 font-medium">Image in Menu:</span>
+            <button
+              onClick={toggleImageRequired}
+              disabled={isUpdatingSetting}
+              className={`w-11 h-6 rounded-full transition-colors relative ${
+                (dbUser?.itemImageEnabled ?? true) ? "bg-[#e8845c]" : "bg-zinc-700"
+              }`}
+            >
+              <div
+                className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-transform ${
+                  (dbUser?.itemImageEnabled ?? true) ? "translate-x-5" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
           <div className="relative flex-1 sm:flex-none">
             <Search
               size={18}

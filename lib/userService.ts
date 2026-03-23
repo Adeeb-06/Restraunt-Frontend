@@ -6,24 +6,25 @@ import { apiFetch } from "./api";
 
 export interface BackendUser {
   _id: string;
-  username: string;
+  restrauntName: string;
   email: string;
   firebaseUid: string;
   role: "admin" | "owner";
   photoURL: string;
+  itemImageEnabled?: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
 interface RegisterPayload {
-  username: string;
+  restrauntName: string;
   email: string;
   firebaseUid?: string;
   photoURL?: string;
 }
 
 interface UpsertPayload {
-  username?: string;
+  restrauntName?: string;
   email: string;
   firebaseUid?: string;
   photoURL?: string;
@@ -76,4 +77,16 @@ export async function getUserByEmail(
   token: string
 ): Promise<BackendUser> {
   return apiFetch(`/api/users/${encodeURIComponent(email)}`, { token });
+}
+
+export async function updateUserSettingsInDB(
+  email: string,
+  token: string,
+  settings: { itemImageEnabled: boolean }
+): Promise<{ message: string; user: BackendUser }> {
+  return apiFetch(`/api/users/${encodeURIComponent(email)}/settings`, {
+    method: "PATCH",
+    token,
+    body: JSON.stringify(settings)
+  });
 }

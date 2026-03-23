@@ -40,7 +40,7 @@ export default function LoginPage() {
       // Sync user to MongoDB
       try {
         await upsertUserInDB({
-          username:
+          restrauntName:
             userCred.user.displayName ||
             data.email.split("@")[0],
           email: data.email,
@@ -77,7 +77,7 @@ export default function LoginPage() {
       // Upsert — create if new user, link UID if returning user
       try {
         await upsertUserInDB({
-          username: user.displayName || user.email?.split("@")[0] || "Guest",
+          restrauntName: user.displayName || user.email?.split("@")[0] || "Guest",
           email: user.email!,
           firebaseUid: user.uid,
           photoURL: user.photoURL || "",

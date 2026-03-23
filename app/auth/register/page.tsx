@@ -15,7 +15,7 @@ import { setAuthCookieAndRedirect } from "@/lib/auth";
 import { registerUserInDB, upsertUserInDB } from "@/lib/userService";
 
 interface FormData {
-  username: string;
+  restrauntName: string;
   email: string;
   password: string;
 }
@@ -41,12 +41,12 @@ export default function RegisterPage() {
         data.password
       );
       createdUser = userCred.user;
-      await updateProfile(createdUser, { displayName: data.username });
+      await updateProfile(createdUser, { displayName: data.restrauntName });
 
       // 2. Persist user in MongoDB via the backend
       try {
         await registerUserInDB({
-          username: data.username,
+          restrauntName: data.restrauntName,
           email: data.email,
           firebaseUid: createdUser.uid,
           photoURL: createdUser.photoURL || "",
@@ -84,7 +84,7 @@ export default function RegisterPage() {
 
       try {
         await upsertUserInDB({
-          username: createdUser.displayName || createdUser.email?.split("@")[0] || "Guest",
+          restrauntName: createdUser.displayName || createdUser.email?.split("@")[0] || "Guest",
           email: createdUser.email!,
           firebaseUid: createdUser.uid,
           photoURL: createdUser.photoURL || "",
@@ -153,11 +153,11 @@ export default function RegisterPage() {
                 <input
                   type="text"
                   placeholder="Gordon Ramsay"
-                  {...register("username", { required: "Name is required" })}
-                  className={`w-full bg-[#0a0a0a] border ${errors.username ? 'border-red-500' : 'border-zinc-800'} rounded-xl py-3 pl-11 pr-4 text-white placeholder-zinc-700 focus:outline-none focus:border-[#e8845c] transition-colors`}
+                  {...register("restrauntName", { required: "Name is required" })}
+                  className={`w-full bg-[#0a0a0a] border ${errors.restrauntName ? 'border-red-500' : 'border-zinc-800'} rounded-xl py-3 pl-11 pr-4 text-white placeholder-zinc-700 focus:outline-none focus:border-[#e8845c] transition-colors`}
                 />
               </div>
-              {errors.username && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.username.message}</p>}
+              {errors.restrauntName && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.restrauntName.message}</p>}
             </div>
 
             <div>
