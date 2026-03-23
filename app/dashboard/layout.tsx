@@ -38,7 +38,7 @@ export default function DashboardLayout({
         <div className="p-8 max-w-[1600px] mx-auto">
            <div className="mb-8">
               <h1 className="text-3xl font-bold font-serif text-white">
-                Welcome back, <span className="text-[#e8845c]">{dbUser?.username || "Chef"}</span>
+                Welcome back, <span className="text-[#e8845c]">{dbUser?.restrauntName || "Chef"}</span>
               </h1>
               <p className="text-zinc-400 text-sm mt-1">
                 Here's what's happening in your restaurant today.
