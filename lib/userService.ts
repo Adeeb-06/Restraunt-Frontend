@@ -90,3 +90,15 @@ export async function updateUserSettingsInDB(
     body: JSON.stringify(settings)
   });
 }
+
+export async function updateUserProfileInDB(
+  email: string,
+  token: string,
+  profile: { restrauntName?: string; photoURL?: string }
+): Promise<{ message: string; user: BackendUser }> {
+  return apiFetch(`/api/users/${encodeURIComponent(email)}/profile`, {
+    method: "PATCH",
+    token,
+    body: JSON.stringify(profile)
+  });
+}

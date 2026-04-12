@@ -124,7 +124,7 @@ export default function Navbar() {
                         <User size={16} /> My Profile
                       </Link>
                       {(dbUser?.role === "admin" || dbUser?.role === "owner") && (
-                        <Link href="/dashboard" className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800/60 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
+                        <Link href={dbUser?.role === "admin" ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800/60 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
                           <LayoutDashboard size={16} /> Dashboard
                         </Link>
                       )}

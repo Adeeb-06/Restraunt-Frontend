@@ -6,7 +6,7 @@ export default function NavbarWrapper() {
   const pathname = usePathname();
   
   // Do not show navbar on dashboard routes
-  const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/menu");
+  const isDashboard = pathname?.startsWith("/dashboard") || pathname?.startsWith("/menu") || pathname?.startsWith("/admin/dashboard")
   
   if (isDashboard) return null;
   
