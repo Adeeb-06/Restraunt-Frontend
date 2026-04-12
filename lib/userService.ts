@@ -12,6 +12,10 @@ export interface BackendUser {
   role: "admin" | "owner";
   photoURL: string;
   itemImageEnabled?: boolean;
+  colors?: {
+    primary: string;
+    secondary: string;
+  };
   createdAt: string;
   updatedAt: string;
 }
@@ -100,5 +104,17 @@ export async function updateUserProfileInDB(
     method: "PATCH",
     token,
     body: JSON.stringify(profile)
+  });
+}
+
+export async function updateUserColorsInDB(
+  email: string,
+  token: string,
+  colors: { primary: string; secondary: string }
+): Promise<{ message: string; user: BackendUser }> {
+  return apiFetch(`/api/users/${encodeURIComponent(email)}/colors`, {
+    method: "PATCH",
+    token,
+    body: JSON.stringify({ colors })
   });
 }
