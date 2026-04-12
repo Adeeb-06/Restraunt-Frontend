@@ -10,7 +10,7 @@ function MenuContent() {
   const restrauntNameQuery = searchParams.get("restrauntName") || searchParams.get("restaurantName");
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] md:p-8 p-0">
+    <div className="min-h-screen">
         <MenuPreview restaurantName={restrauntNameQuery} />
     </div>
   );

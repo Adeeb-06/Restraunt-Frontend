@@ -3,6 +3,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Loader2, Utensils, Info, ChevronDown } from "lucide-react";
 import MenuContext from "@/app/context/menuContext";
+import Image from "next/image";
 
 interface Item {
   _id: string;
@@ -213,11 +214,12 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
         <div className="relative mb-2">
           <div className="relative z-10 w-[100px] h-[100px] rounded-full overflow-hidden border-[2px] shadow-lg" style={{ borderColor: pColor, backgroundColor: sColor }}>
             {restaurant.photoURL ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={restaurant.photoURL}
                 alt={`${restaurant.name} logo`}
                 className="w-full h-full object-cover"
+                width={100}
+                height={100}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center opacity-40" style={{ color: pColor }}>

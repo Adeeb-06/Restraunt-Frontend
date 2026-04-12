@@ -14,7 +14,8 @@ import {
   CalendarDays,
   Store,
   ChefHat,
-  Tags
+  Tags,
+  QrCode
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -52,6 +53,7 @@ export default function Sidebar() {
     { icon: Home, label: "Overview", href: "/dashboard" },
     { icon: UtensilsCrossed, label: "Menu Editor", href: "/dashboard/menu" },
     { icon: Tags, label: "Categories", href: "/dashboard/categories" },
+    { icon: QrCode, label: "QR Code", href: "/dashboard/qr" },
     { icon: User, label: "Profile", href: "/dashboard/profile" },
     { icon: Settings, label: "General Settings", href: "/dashboard/settings" },
   ];
@@ -61,6 +63,7 @@ export default function Sidebar() {
     { icon: Home, label: "Dashboard", href: "/dashboard" },
     { icon: ClipboardList, label: "Orders", href: "/dashboard/orders" },
     { icon: UtensilsCrossed, label: "Manage Menu", href: "/dashboard/menu" },
+    { icon: QrCode, label: "QR Code", href: "/dashboard/qr" },
     { icon: User, label: "Profile", href: "/dashboard/profile" },
     { icon: Settings, label: "Profile Settings", href: "/dashboard/settings" },
   ];
