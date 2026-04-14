@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { Loader2, Utensils, Info, ChevronDown } from "lucide-react";
+import { Loader2, Utensils, Info, ChevronDown, Plus, ShoppingCart } from "lucide-react";
 import MenuContext from "@/app/context/menuContext";
+import CartContext from "@/app/context/cartContext";
 import Image from "next/image";
+import Link from "next/link";
 
 interface Item {
   _id: string;
@@ -45,8 +47,16 @@ function MenuItem({
   sColor: string;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const cartContext = useContext(CartContext);
   const isLong = item.description && item.description.length > 90;
   const isAvailable = item.showInMenu !== false;
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (cartContext && isAvailable) {
+      cartContext.addToCart(item);
+    }
+  };
 
   return (
     <div
@@ -74,20 +84,29 @@ function MenuItem({
       {/* Image */}
       {showImage && (
         <div 
-          className="relative shrink-0 w-[88px] h-[88px] rounded-xl overflow-hidden border"
+          className="relative shrink-0 w-[88px] h-[88px] rounded-xl overflow-hidden border group/img cursor-pointer"
           style={{ borderColor: pColor, backgroundColor: sColor }}
+          onClick={handleAddToCart}
         >
           {item.image ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={item.image}
               alt={item.name}
-              className={`w-full h-full object-cover transition-transform duration-500 ease-out ${isAvailable ? "group-hover:scale-105" : ""}`}
+              className={`w-full h-full object-cover transition-transform duration-500 ease-out ${isAvailable ? "group-hover/img:scale-110" : ""}`}
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center opacity-40" style={{ color: pColor }}>
+            <div className="w-full h-full flex items-center justify-center opacity-40 transition-transform duration-500 ease-out group-hover/img:scale-110" style={{ color: pColor }}>
               <Utensils size={20} strokeWidth={1.4} />
+            </div>
+          )}
+          {/* Add to Cart Overlay */}
+          {isAvailable && (
+            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300">
+              <div className="bg-white/90 p-1.5 rounded-full shadow-lg transform scale-90 group-hover/img:scale-100 transition-all duration-300">
+                <Plus size={20} className="text-black" />
+              </div>
             </div>
           )}
         </div>
@@ -103,12 +122,24 @@ function MenuItem({
           >
             {item.name}
           </h3>
-          <span 
-            className="shrink-0 font-mono text-[0.78rem] font-medium px-2.5 py-0.5 rounded-full border"
-            style={{ color: pColor, borderColor: pColor, backgroundColor: sColor }}
-          >
-            ${Number(item.price).toFixed(2)}
-          </span>
+          <div className="flex items-center gap-2">
+            <span 
+              className="shrink-0 font-mono text-[0.78rem] font-medium px-2.5 py-0.5 rounded-full border"
+              style={{ color: pColor, borderColor: pColor, backgroundColor: sColor }}
+            >
+              ${Number(item.price).toFixed(2)}
+            </span>
+            {isAvailable && !showImage && (
+              <button 
+                onClick={handleAddToCart}
+                className="p-1 rounded-full border transition-all hover:scale-110"
+                style={{ color: sColor, backgroundColor: pColor, borderColor: pColor }}
+                aria-label="Add to cart"
+              >
+                <Plus size={14} strokeWidth={2.5} />
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Description */}
@@ -147,6 +178,8 @@ function MenuItem({
 export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
   const { setRestaurantName, menuData, menuLoading, menuIsError, menuError } =
     useContext(MenuContext)!;
+  const cartContext = useContext(CartContext);
+  const cartItemCount = cartContext?.cart.reduce((total, item) => total + item.quantity, 0) || 0;
 
   useEffect(() => {
     if (restaurantName) setRestaurantName(restaurantName);
@@ -330,6 +363,31 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
           — {restaurant.name} —
         </span>
       </footer>
+
+      {/* Floating View Cart / Orders Button */}
+      {cartItemCount > 0 && (
+        <div className="fixed bottom-6 w-full max-w-2xl mx-auto left-0 right-0 z-50 px-4 pointer-events-none flex justify-center">
+          <Link
+            href={`/orders?restrauntName=${encodeURIComponent(restaurantName || "")}`}
+            className="pointer-events-auto flex items-center justify-between gap-4 py-3.5 px-6 rounded-full shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full md:w-auto"
+            style={{ backgroundColor: pColor, color: sColor, border: `1px solid ${sColor}` }}
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <ShoppingCart size={22} />
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[0.6rem] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                  {cartItemCount}
+                </span>
+              </div>
+              <span className="font-serif font-bold text-sm tracking-wide">My Orders</span>
+            </div>
+            
+            <span className="font-mono font-medium text-sm">
+              ${cartContext?.totalPrice.toFixed(2)}
+            </span>
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

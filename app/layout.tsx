@@ -7,6 +7,7 @@ import { FirebaseAuthProvider } from "@/providers/FirebaseAuthProvider";
 import NavbarWrapper from "@/components/NavbarWrapper";
 import QueryProvider from "@/providers/QueryProvider";
 import MenuProvider from "@/providers/MenuProvider";
+import CartProvider from "@/providers/CartProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -35,14 +36,16 @@ export default function RootLayout({
         <QueryProvider>
           <FirebaseAuthProvider>
             <MenuProvider>
-              <NavbarWrapper />
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                hideProgressBar={false}
-                theme="dark"
-              />
-              {children}
+              <CartProvider>
+                <NavbarWrapper />
+                <ToastContainer
+                  position="top-right"
+                  autoClose={3000}
+                  hideProgressBar={false}
+                  theme="dark"
+                />
+                {children}
+              </CartProvider>
             </MenuProvider>
           </FirebaseAuthProvider>
         </QueryProvider>
