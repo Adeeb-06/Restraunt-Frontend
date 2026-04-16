@@ -219,13 +219,60 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
   /* ── Loading ── */
   if (menuLoading || !menuData) {
     return (
-      <div className="w-full min-h-[50vh] rounded-2xl border flex flex-col items-center justify-center gap-3" style={{ backgroundColor: '#ECE7D1', borderColor: '#3E2C23', color: '#1E1208' }}>
-        <Loader2
-          size={28}
-          strokeWidth={1.5}
-          className="animate-spin opacity-50"
-        />
-        <p className="text-sm italic opacity-50 animate-pulse">Loading menu…</p>
+      <div 
+        className="w-full min-h-[100dvh] rounded-2xl border flex flex-col pt-12 px-6 overflow-hidden bg-gradient-to-b"
+        style={{ 
+          backgroundColor: '#ECE7D1', 
+          borderColor: '#3E2C23',
+          backgroundImage: 'linear-gradient(to bottom, #ECE7D1, #E5DCC0)',
+          color: '#1E1208' 
+        }}
+      >
+        <div className="animate-pulse flex flex-col items-center w-full max-w-2xl mx-auto">
+          {/* Logo Skeleton */}
+          <div className="w-[100px] h-[100px] rounded-full border-[2px] shadow-lg mb-4 flex items-center justify-center bg-black/5" style={{ borderColor: '#3E2C23' }}>
+             <Utensils size={30} className="opacity-20 animate-bounce" />
+          </div>
+          
+          {/* Title Skeleton */}
+          <div className="h-8 w-48 bg-black/10 rounded-full mb-3 shrink-0"></div>
+          
+          {/* Badge Skeleton */}
+          <div className="h-4 w-24 bg-black/10 rounded-full mb-6 shrink-0"></div>
+
+          {/* Nav Categories Skeleton */}
+          <div className="flex gap-2 mb-10 w-full justify-center">
+            <div className="h-7 w-16 bg-black/10 rounded-full"></div>
+            <div className="h-7 w-20 bg-black/10 rounded-full"></div>
+            <div className="h-7 w-16 bg-black/10 rounded-full"></div>
+          </div>
+
+          <div className="w-full flex justify-center mb-8">
+             <div className="text-xl opacity-20 tracking-wider">--- ✦ ---</div>
+          </div>
+
+          {/* Category Title */}
+          <div className="h-6 w-32 bg-black/10 rounded-full mb-5"></div>
+
+          {/* Menu Items Skeleton */}
+          <div className="w-full flex gap-4 flex-col">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex gap-4 p-4 rounded-2xl border flex-col sm:flex-row shadow-sm" style={{ borderColor: '#3E2C23', backgroundColor: 'rgba(255,255,255,0.4)' }}>
+                {/* Image Skeleton */}
+                <div className="w-full sm:w-[88px] h-32 sm:h-[88px] rounded-xl bg-black/10 shrink-0"></div>
+                {/* Text Skeleton */}
+                <div className="flex-1 flex flex-col gap-3 py-1">
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="h-5 w-3/4 bg-black/10 rounded"></div>
+                    <div className="h-5 w-12 bg-black/10 rounded-full shrink-0"></div>
+                  </div>
+                  <div className="h-3 w-full bg-black/5 rounded"></div>
+                  <div className="h-3 w-4/5 bg-black/5 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

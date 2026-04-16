@@ -136,7 +136,7 @@ function OrdersContent() {
             <div className="border border-t-2 rounded-2xl p-6 shadow-md" style={{ borderColor: pColor }}>
               <div className="flex items-center justify-between mb-">
                 <span className="font-serif text-xl font-bold opacity-80">Subtotal</span>
-                <span className="font-mono text-lg font-bold">${totalPrice.toFixed(2)}</span>
+                <span className="font-mono text-xl font-bold">${totalPrice.toFixed(2)}</span>
               </div>
               
              

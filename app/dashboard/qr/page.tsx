@@ -16,7 +16,7 @@ export default function QrCodePage() {
 
   useEffect(() => {
     if (dbUser?.restrauntName) {
-      const url = `https://quickserve-ten.vercel.app/menu?restrauntName=${encodeURIComponent(
+      const url = `${process.env.CLIENT_URL}/menu?restrauntName=${encodeURIComponent(
         dbUser.restrauntName
       )}`;
       setMenuUrl(url);
