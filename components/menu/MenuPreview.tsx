@@ -129,7 +129,7 @@ function MenuItem({
             >
               ${Number(item.price).toFixed(2)}
             </span>
-            {isAvailable && !showImage && (
+            {isAvailable && (
               <button 
                 onClick={handleAddToCart}
                 className="p-1 rounded-full border transition-all hover:scale-110"
