@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useAuth } from "@/providers/FirebaseAuthProvider";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { label: "Menu", href: "#menu" },
@@ -61,46 +62,45 @@ export default function Navbar() {
 
   return (
     <>
-      <header className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${scrolled ? "bg-[#0f0e0c]/80 backdrop-blur-xl border-b border-zinc-800 shadow-xl" : "bg-transparent border-b border-transparent"}`}>
+      <header className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${scrolled ? "bg-[#F7F9F2]/80 backdrop-blur-xl border-b border-zinc-200 shadow-sm" : "bg-transparent border-b border-transparent"}`}>
         <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
           
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-2 flex-shrink-0 group" onClick={() => setMobileOpen(false)}>
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#e8845c] to-[#c96a41] flex items-center justify-center text-white shadow-lg shadow-[#e8845c]/30 group-hover:scale-105 transition-transform">
-              <ChefHat size={20} strokeWidth={2} />
+          <Link href="/" className="flex items-center  group" onClick={() => setMobileOpen(false)}>
+            <div className="w-16 h-16 relative flex items-center justify-center group-hover:scale-105 transition-transform drop-shadow-sm">
+              <Image width={120} height={120} src="/scanlylogo.png" alt="Scanly Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="font-serif text-xl font-bold text-white tracking-wide">Saveur</span>
-            <UtensilsCrossed size={14} className="text-[#f5c27a] opacity-70 -ml-1" />
+            <span className="font-sans text-2xl font-black text-zinc-900 tracking-tight">Scanly</span>
           </Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1 flex-1 ml-4" aria-label="Main navigation">
             {NAV_LINKS.map((link) => (
-              <a key={link.label} href={link.href} className="text-sm font-medium text-zinc-400 hover:text-white px-3 py-2 rounded-lg hover:bg-white/5 transition-colors">
+              <Link key={link.label} href={link.href} className="text-sm font-medium text-zinc-600 hover:text-[#49BEB7] px-3 py-2 rounded-lg hover:bg-zinc-200/50 transition-colors">
                 {link.label}
-              </a>
+              </Link>
             ))}
           </nav>
 
           {/* Auth Area */}
           <div className="flex items-center gap-3 ml-auto">
             {authLoading ? (
-               <div className="w-40 h-9 rounded-lg bg-zinc-800/50 animate-pulse" />
+               <div className="w-40 h-9 rounded-lg bg-zinc-200/50 animate-pulse" />
             ) : firebaseUser ? (
               <div className="relative" ref={userMenuRef}>
                 <button
-                  className="flex items-center gap-2 p-1 pl-1.5 pr-3 rounded-full hover:bg-zinc-800 transition-colors border border-transparent hover:border-zinc-700"
+                  className="flex items-center gap-2 p-1 pl-1.5 pr-3 rounded-full hover:bg-zinc-200/50 transition-colors border border-transparent hover:border-zinc-300"
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
                 >
                   {firebaseUser.photoURL ? (
-                    <img src={firebaseUser.photoURL} alt="User" className="w-7 h-7 rounded-full object-cover" />
+                    <img src={firebaseUser.photoURL} alt="User" className="w-7 h-7 rounded-full object-cover shadow-sm" />
                   ) : (
-                    <div className="w-7 h-7 rounded-full bg-[#1a1916] border border-zinc-700 flex items-center justify-center text-xs font-bold text-zinc-300">
+                    <div className="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 flex items-center justify-center text-xs font-bold text-zinc-600">
                       {initials}
                     </div>
                   )}
-                  <span className="text-sm font-medium text-white hidden sm:block">
+                  <span className="text-sm font-medium text-zinc-800 hidden sm:block">
                     {firebaseUser.displayName?.split(" ")[0] ?? "Account"}
                   </span>
                   <svg
@@ -113,25 +113,25 @@ export default function Navbar() {
 
                 {/* Dropdown */}
                 {userMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-56 rounded-xl bg-[#111111] border border-zinc-800 shadow-2xl overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-200">
-                    <div className="px-4 py-3 border-b border-zinc-800/80">
-                      <p className="text-sm font-bold text-white truncate">{firebaseUser.displayName ?? "Guest"}</p>
+                  <div className="absolute right-0 mt-2 w-56 rounded-xl bg-white border border-zinc-200 shadow-xl overflow-hidden py-1 animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-3 border-b border-zinc-100">
+                      <p className="text-sm font-bold text-zinc-900 truncate">{firebaseUser.displayName ?? "Guest"}</p>
                       <p className="text-xs text-zinc-500 truncate mt-0.5">{firebaseUser.email}</p>
                     </div>
                     
                     <div className="p-1.5">
-                      <Link href="/profile" className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800/60 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
+                      <Link href="/profile" className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:text-[#49BEB7] hover:bg-[#49BEB7]/10 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
                         <User size={16} /> My Profile
                       </Link>
                       {(dbUser?.role === "admin" || dbUser?.role === "owner") && (
-                        <Link href={dbUser?.role === "admin" ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-300 hover:text-white hover:bg-zinc-800/60 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
+                        <Link href={dbUser?.role === "admin" ? "/admin/dashboard" : "/dashboard"} className="flex items-center gap-2 px-3 py-2 text-sm text-zinc-700 hover:text-[#49BEB7] hover:bg-[#49BEB7]/10 rounded-lg transition-colors" onClick={() => setUserMenuOpen(false)}>
                           <LayoutDashboard size={16} /> Dashboard
                         </Link>
                       )}
                     </div>
                     
-                    <div className="p-1.5 border-t border-zinc-800/80">
-                      <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-2 w-full text-left text-sm text-red-400 hover:bg-red-400/10 rounded-lg transition-colors">
+                    <div className="p-1.5 border-t border-zinc-100">
+                      <button onClick={handleLogout} className="flex items-center gap-2 px-3 py-2 w-full text-left text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors">
                         <LogOut size={16} /> Sign Out
                       </button>
                     </div>
@@ -140,17 +140,17 @@ export default function Navbar() {
               </div>
             ) : (
               <div className="hidden sm:flex items-center gap-3">
-                <Link href="/auth/login" className="text-sm font-medium text-zinc-400 hover:text-white px-4 py-2 hover:bg-white/5 rounded-lg transition-colors">
+                <Link href="/auth/login" className="text-sm font-medium text-zinc-600 hover:text-zinc-900 px-4 py-2 hover:bg-zinc-200/50 rounded-lg transition-colors">
                   Sign In
                 </Link>
-                <Link href="/auth/register" className="text-sm font-bold text-white bg-gradient-to-r from-[#e8845c] to-[#c96a41] px-5 py-2 rounded-lg shadow-lg hover:shadow-[#e8845c]/30 hover:scale-105 transition-all">
+                <Link href="/auth/register" className="text-sm font-bold text-white bg-[#49BEB7] px-5 py-2 rounded-lg shadow-md hover:shadow-lg hover:bg-[#3ba8a1] transition-all">
                   Get Started
                 </Link>
               </div>
             )}
 
             {/* Mobile Hamburger */}
-            <button className="md:hidden p-2 text-zinc-400 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors ml-2" onClick={() => setMobileOpen((v) => !v)}>
+            <button className="md:hidden p-2 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-200 rounded-lg transition-colors ml-2" onClick={() => setMobileOpen((v) => !v)}>
               {mobileOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -160,11 +160,11 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {mobileOpen && (
         <>
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity" onClick={() => setMobileOpen(false)} />
-          <div className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#0c0c0c] border-l border-zinc-800 z-50 p-6 flex flex-col animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 transition-opacity" onClick={() => setMobileOpen(false)} />
+          <div className="fixed top-0 right-0 bottom-0 w-[280px] bg-[#F7F9F2] border-l border-zinc-200 z-50 p-6 flex flex-col animate-in slide-in-from-right duration-300 shadow-2xl">
             <nav className="flex flex-col gap-2 mt-12 mb-8">
               {NAV_LINKS.map((link) => (
-                <a key={link.label} href={link.href} className="text-lg font-medium text-zinc-300 hover:text-white px-4 py-3 rounded-lg hover:bg-zinc-800/50 transition-colors" onClick={() => setMobileOpen(false)}>
+                <a key={link.label} href={link.href} className="text-lg font-medium text-zinc-700 hover:text-[#49BEB7] px-4 py-3 rounded-lg hover:bg-zinc-200/50 transition-colors" onClick={() => setMobileOpen(false)}>
                   {link.label}
                 </a>
               ))}
@@ -172,13 +172,13 @@ export default function Navbar() {
 
             {!authLoading && !firebaseUser && (
               <div className="flex flex-col gap-3 mt-auto">
-                <Link href="/auth/login" className="text-center font-medium bg-zinc-800 text-white py-3 rounded-xl hover:bg-zinc-700 transition-colors" onClick={() => setMobileOpen(false)}>Sign In</Link>
-                <Link href="/auth/register" className="text-center font-bold bg-[#e8845c] text-white py-3 rounded-xl hover:bg-[#c96a41] transition-colors" onClick={() => setMobileOpen(false)}>Get Started</Link>
+                <Link href="/auth/login" className="text-center font-medium bg-zinc-200/80 text-zinc-800 py-3 rounded-xl hover:bg-zinc-300 transition-colors" onClick={() => setMobileOpen(false)}>Sign In</Link>
+                <Link href="/auth/register" className="text-center font-bold bg-[#49BEB7] text-white py-3 rounded-xl hover:bg-[#3ba8a1] shadow-md transition-colors" onClick={() => setMobileOpen(false)}>Get Started</Link>
               </div>
             )}
             
             {!authLoading && firebaseUser && (
-              <button className="mt-auto flex items-center justify-center gap-2 text-red-400 bg-red-400/10 py-3 rounded-xl hover:bg-red-400/20 transition-colors font-medium" onClick={handleLogout}>
+              <button className="mt-auto flex items-center justify-center gap-2 text-red-500 bg-red-50 py-3 rounded-xl hover:bg-red-100 transition-colors font-medium border border-red-100" onClick={handleLogout}>
                 <LogOut size={18} /> Sign Out
               </button>
             )}

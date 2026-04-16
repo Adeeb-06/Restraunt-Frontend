@@ -15,6 +15,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/providers/FirebaseAuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
 export default function AdminSidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -57,15 +58,15 @@ export default function AdminSidebar() {
       <div className="h-16 flex items-center justify-between px-4 py-10 border-b border-zinc-800">
         {!isCollapsed && (
           <Link href="/admin/dashboard" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white">
-              <ChefHat size={18} />
+            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1">
+              <Image src="/scanlylogo.png" alt="Scanly Logo" width={40} height={40} className="object-contain" />
             </div>
-            <span className="font-bold text-xl font-serif tracking-wide">Saveur Admin</span>
+            <span className="font-black text-xl font-sans tracking-tight">Scanly Admin</span>
           </Link>
         )}
         {isCollapsed && (
-          <div className="mx-auto text-orange-500">
-            <ChefHat size={28} />
+          <div className="mx-auto w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1 pb-1">
+            <Image src="/scanlylogo.png" alt="Scanly Logo" width={32} height={32} className="object-contain" />
           </div>
         )}
         <button
@@ -119,7 +120,7 @@ export default function AdminSidebar() {
               <p className="text-xl font-medium text-white truncate">
                 {dbUser?.restrauntName || "Admin User"}
               </p>
-              <p className="text-xs text-orange-400 uppercase tracking-widest truncate mt-1">
+              <p className="text-xs text-[#49BEB7] uppercase tracking-widest truncate mt-1">
                 System Admin
               </p>
             </div>
@@ -129,7 +130,7 @@ export default function AdminSidebar() {
         <div className="flex items-center mt-4 space-x-3">
           <button
             onClick={handleLogout}
-            className={`btn btn-sm bg-[#e8845c] hover:bg-[#c96a41] border-none text-white ${isCollapsed ? "w-full" : ""}`}
+            className={`btn btn-sm bg-[#49BEB7] hover:bg-[#3ba8a1] border-none text-white ${isCollapsed ? "w-full" : ""}`}
             title="Sign Out"
           >
             <UserIcon className="w-4 h-4" />

@@ -22,6 +22,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/providers/FirebaseAuthProvider";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
+import Image from "next/image";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -80,15 +81,15 @@ export default function Sidebar() {
       <div className="h-16 flex items-center justify-between px-4 py-10 border-b border-zinc-800">
         {!isCollapsed && (
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center text-white">
-              <ChefHat size={18} />
+            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1">
+              <Image src="/scanlylogo.png" alt="Scanly Logo" width={40} height={40} className="object-contain" />
             </div>
-            <span className="font-bold text-xl font-serif tracking-wide">Saveur</span>
+            <span className="font-black text-2xl font-sans tracking-tight">Scanly</span>
           </Link>
         )}
         {isCollapsed && (
-          <div className="mx-auto text-orange-500">
-            <ChefHat size={28} />
+          <div className="mx-auto w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1 pb-1">
+            <Image src="/scanlylogo.png" alt="Scanly Logo" width={32} height={32} className="object-contain" />
           </div>
         )}
         <button
@@ -153,7 +154,7 @@ export default function Sidebar() {
         <div className="flex items-center mt-4 space-x-3">
           <button
             onClick={handleLogout}
-            className={`btn btn-sm bg-[#e8845c] hover:bg-[#c96a41] border-none text-white ${isCollapsed ? "w-full" : ""}`}
+            className={`btn btn-sm bg-[#49BEB7] hover:bg-[#3ba8a1] border-none text-white ${isCollapsed ? "w-full" : ""}`}
             title="Sign Out"
           >
             <User className="w-4 h-4" />
