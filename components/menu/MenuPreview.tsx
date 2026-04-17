@@ -138,7 +138,7 @@ function MenuItem({
         {/* Name + Price row */}
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3">
           <h3 
-            className="font-serif font-bold text-[1.1rem] leading-snug tracking-wide group-hover:text-opacity-80 transition-colors"
+            className="font-serif font-bold text-[1.1rem] leading-snug tracking-wide group-hover:text-opacity-80 transition-colors wrap-break-word"
             style={{ color: pColor }}
           >
             {item.name}
@@ -349,7 +349,7 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
 
         {/* Name */}
         <h1
-          className="font-serif font-black text-[clamp(2rem,6vw,3rem)] leading-tight tracking-wider uppercase"
+          className="font-serif font-black text-[clamp(1.75rem,8vw,3rem)] leading-tight tracking-wider uppercase break-words px-2 w-full max-w-[90vw]"
           style={{ color: pColor, textShadow: `0 4px 20px ${pColor}20` }}
         >
           {restaurant.name}
@@ -412,15 +412,15 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
           filledCats.map((cat: MenuCategory, catIdx: number) => (
             <section key={catIdx} id={`cat-${catIdx}`} className="scroll-mt-6">
               {/* Category heading */}
-              <div className="flex items-center justify-center gap-4 mb-8" style={{ color: pColor }}>
-                <div className="h-[2px] w-12 rounded-full opacity-30" style={{ backgroundColor: pColor }} />
+              <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6 sm:mb-8" style={{ color: pColor }}>
+                <div className="h-[2px] w-6 sm:w-12 rounded-full opacity-30 shrink-0" style={{ backgroundColor: pColor }} />
                 <h2
-                  className="font-serif text-2xl md:text-[1.85rem] font-black tracking-widest uppercase"
+                  className="font-serif text-xl sm:text-2xl md:text-[1.85rem] font-black tracking-widest uppercase text-center break-words max-w-[65%]"
                   style={{ textShadow: `0 2px 10px ${pColor}10` }}
                 >
                   {cat.category}
                 </h2>
-                <div className="h-[2px] w-12 rounded-full opacity-30" style={{ backgroundColor: pColor }} />
+                <div className="h-[2px] w-6 sm:w-12 rounded-full opacity-30 shrink-0" style={{ backgroundColor: pColor }} />
               </div>
 
               {/* Items list */}

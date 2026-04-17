@@ -16,7 +16,7 @@ export default function QrCodePage() {
 
   useEffect(() => {
     if (dbUser?.restrauntName) {
-      const url = `${process.env.CLIENT_URL}/menu?restrauntName=${encodeURIComponent(
+      const url = `https://scanlybd.vercel.app/menu?restrauntName=${encodeURIComponent(
         dbUser.restrauntName
       )}`;
       setMenuUrl(url);
@@ -190,11 +190,18 @@ export default function QrCodePage() {
               )}
             </div>
 
-            <div className="flex items-center gap-1.5 text-zinc-400">
+            <div className="flex items-center gap-1.5 text-zinc-400 mb-2">
                <QrCode size={11} strokeWidth={2.5} />
                <p className="text-[0.55rem] font-medium tracking-wide">
                  Point your camera to order
                </p>
+            </div>
+
+            {/* Promo / Branding */}
+            <div className="mt-auto pt-2 border-t border-zinc-100/60 w-full text-center">
+              <p className="text-[0.45rem] font-extrabold text-zinc-400 tracking-widest uppercase opacity-80">
+                Powered by <span className="text-[#091413]">scanlybd.com</span>
+              </p>
             </div>
           </div>
         </div>

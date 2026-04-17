@@ -80,11 +80,10 @@ export default function Sidebar() {
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 py-10 border-b border-zinc-800">
         {!isCollapsed && (
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1">
-              <Image src="/scanlylogo.png" alt="Scanly Logo" width={40} height={40} className="object-contain" />
+          <Link href="/" className="flex shrink-0">
+            <div className="w-40 flex items-center">
+              <Image src="/scanlyTealText.png" alt="Scanly" width={88} height={28} className="w-full h-auto object-contain" />
             </div>
-            <span className="font-black text-2xl font-sans tracking-tight">Scanly</span>
           </Link>
         )}
         {isCollapsed && (

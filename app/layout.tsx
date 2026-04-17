@@ -20,9 +20,34 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Saveur — Fine Dining Experience",
+  title: "Scanly — Modern QR Smart Menus for Restaurants",
   description:
-    "Explore our curated restaurant menu with exquisite dishes and authentic flavors.",
+    "Elevate your dining experience with Scanly. We provide sleek, interactive, and beautifully customizable digital QR menus for modern restaurants.",
+  keywords: ["QR Menu", "Digital Menu", "Restaurant Management", "Scanly", "Smart Menu", "Restaurant SaaS"],
+  openGraph: {
+    title: "Scanly — Smart QR Menus",
+    description: "Sleek, interactive, and customizable digital QR menus for modern restaurants.",
+    type: "website",
+    siteName: "Scanly",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Scanly — Smart QR Menus",
+    description: "Sleek, interactive, and customizable digital QR menus for modern restaurants.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    shortcut: "/favicon/favicon.ico",
+    apple: "/favicon/apple-touch-icon.png",
+  },
+  manifest: "/favicon/site.webmanifest",
 };
 
 export default function RootLayout({

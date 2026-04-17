@@ -66,11 +66,13 @@ export default function Navbar() {
         <div className="w-full max-w-7xl mx-auto px-6 flex items-center justify-between gap-8">
           
           {/* Brand */}
-          <Link href="/" className="flex items-center  group" onClick={() => setMobileOpen(false)}>
-            <div className="w-16 h-16 relative flex items-center justify-center group-hover:scale-105 transition-transform drop-shadow-sm">
+          <Link href="/" className="flex items-center group -ml-2" onClick={() => setMobileOpen(false)}>
+            <div className="w-16 h-16 relative flex items-center justify-center group-hover:scale-105 transition-transform drop-shadow-sm shrink-0">
               <Image width={120} height={120} src="/scanlyLogo.png" alt="Scanly Logo" className="w-full h-full object-contain" />
             </div>
-            <span className="font-sans text-2xl font-black text-zinc-900 tracking-tight">Scanly</span>
+            <div className="w-40 flex items-center justify-start ml-[-20px]">
+              <Image width={112} height={56} src="/scanlyTextLogo.png" alt="Scanly" className="w-full h-auto object-contain" />
+            </div>
           </Link>
 
           {/* Desktop Nav */}

@@ -57,11 +57,16 @@ export default function AdminSidebar() {
       {/* Header */}
       <div className="h-16 flex items-center justify-between px-4 py-10 border-b border-zinc-800">
         {!isCollapsed && (
-          <Link href="/admin/dashboard" className="flex items-center space-x-2">
-            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1">
-              <Image src="/scanlylogo.png" alt="Scanly Logo" width={40} height={40} className="object-contain" />
+          <Link href="/admin/dashboard" className="flex items-center space-x-2 shrink-0 gap-1.5">
+            <div className="w-10 h-10 relative flex items-center justify-center drop-shadow-sm bg-white/10 rounded-xl p-1 shrink-0">
+              <Image src="/scanlyLogo.png" alt="Scanly Logo" width={40} height={40} className="object-contain" />
             </div>
-            <span className="font-black text-xl font-sans tracking-tight">Scanly Admin</span>
+            <div className="flex flex-col mt-0.5">
+              <div className="w-[5rem]">
+                <Image src="/scanlyTextLogo.png" alt="Scanly" width={80} height={24} className="w-full h-auto object-contain" />
+              </div>
+              <span className="text-[0.6rem] uppercase tracking-widest text-[#49BEB7] font-bold mt-0.5">Admin</span>
+            </div>
           </Link>
         )}
         {isCollapsed && (
