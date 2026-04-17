@@ -60,21 +60,42 @@ function MenuItem({
 
   return (
     <div
-      className="relative group flex gap-4 p-4 rounded-2xl border transition-all duration-200 hover:-translate-y-px shadow-sm hover:shadow-md"
+      className="relative group flex gap-4 p-4 md:p-5 rounded-3xl border transition-all duration-500 hover:-translate-y-1.5 shadow-sm hover:shadow-2xl overflow-hidden backdrop-blur-md"
       style={{
-        backgroundColor: sColor,
-        borderColor: pColor,
-        opacity: isAvailable ? 1 : 0.6,
+        backgroundColor: `${sColor}E6`, // 90% opacity for slight transparency
+        borderColor: `${pColor}20`,
+        boxShadow: `0 4px 20px ${pColor}08`,
+        opacity: isAvailable ? 1 : 0.65,
+      }}
+      onMouseEnter={(e) => {
+        if(isAvailable) {
+          e.currentTarget.style.boxShadow = `0 12px 30px ${pColor}20`;
+          e.currentTarget.style.borderColor = `${pColor}50`;
+        }
+      }}
+      onMouseLeave={(e) => {
+        if(isAvailable) {
+          e.currentTarget.style.boxShadow = `0 4px 20px ${pColor}08`;
+          e.currentTarget.style.borderColor = `${pColor}20`;
+        }
       }}
     >
+      {/* Decorative gradient overlay */}
+      <div 
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
+        style={{
+          background: `radial-gradient(circle at 100% 0%, ${pColor}10 0%, transparent 50%)`
+        }}
+      />
+
       {/* ── Not Available Overlay ── */}
       {!isAvailable && (
         <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
           <div 
-            className="px-4 py-1.5 rounded-full border shadow-sm transform -rotate-2 scale-105 backdrop-blur-[1px]"
+            className="px-5 py-2 rounded-full border shadow-xl transform -rotate-3 scale-110 backdrop-blur-sm"
             style={{ backgroundColor: sColor, borderColor: pColor }}
           >
-            <span className="font-serif italic font-bold text-[0.85rem] tracking-wide" style={{ color: pColor }}>
+            <span className="font-serif italic font-bold text-[0.95rem] tracking-wide" style={{ color: pColor }}>
               Not Available
             </span>
           </div>
@@ -84,8 +105,8 @@ function MenuItem({
       {/* Image */}
       {showImage && (
         <div 
-          className="relative shrink-0 w-[88px] h-[88px] rounded-xl overflow-hidden border group/img cursor-pointer"
-          style={{ borderColor: pColor, backgroundColor: sColor }}
+          className="relative shrink-0 w-[96px] h-[96px] md:w-[112px] md:h-[112px] rounded-2xl overflow-hidden border group/img cursor-pointer shadow-inner"
+          style={{ borderColor: `${pColor}30`, backgroundColor: sColor }}
           onClick={handleAddToCart}
         >
           {item.image ? (
@@ -93,19 +114,19 @@ function MenuItem({
             <img
               src={item.image}
               alt={item.name}
-              className={`w-full h-full object-cover transition-transform duration-500 ease-out ${isAvailable ? "group-hover/img:scale-110" : ""}`}
+              className={`w-full h-full object-cover transition-transform duration-700 ease-out ${isAvailable ? "group-hover/img:scale-110" : ""}`}
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center opacity-40 transition-transform duration-500 ease-out group-hover/img:scale-110" style={{ color: pColor }}>
-              <Utensils size={20} strokeWidth={1.4} />
+            <div className="w-full h-full flex items-center justify-center opacity-40 transition-transform duration-700 ease-out group-hover/img:scale-110" style={{ color: pColor }}>
+              <Utensils size={24} strokeWidth={1.2} />
             </div>
           )}
           {/* Add to Cart Overlay */}
           {isAvailable && (
-            <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300">
-              <div className="bg-white/90 p-1.5 rounded-full shadow-lg transform scale-90 group-hover/img:scale-100 transition-all duration-300">
-                <Plus size={20} className="text-black" />
+            <div className="absolute inset-0 bg-black/25 flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-opacity duration-300">
+              <div className="bg-white/95 p-2 rounded-full shadow-2xl transform scale-75 group-hover/img:scale-100 transition-all duration-300">
+                <Plus size={22} className="text-black" />
               </div>
             </div>
           )}
@@ -113,30 +134,30 @@ function MenuItem({
       )}
 
       {/* Content */}
-      <div className="flex-1 min-w-0 flex flex-col gap-1.5 py-0.5">
+      <div className="flex-1 min-w-0 flex flex-col gap-2 py-1 z-10 relative">
         {/* Name + Price row */}
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 sm:gap-3">
           <h3 
-            className="font-serif font-semibold text-[0.95rem] leading-snug tracking-[0.01em]"
+            className="font-serif font-bold text-[1.1rem] leading-snug tracking-wide group-hover:text-opacity-80 transition-colors"
             style={{ color: pColor }}
           >
             {item.name}
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-start sm:self-auto">
             <span 
-              className="shrink-0 font-mono text-[0.78rem] font-medium px-2.5 py-0.5 rounded-full border"
-              style={{ color: pColor, borderColor: pColor, backgroundColor: sColor }}
+              className="shrink-0 font-mono text-[0.85rem] font-bold px-3 py-1 rounded-full border shadow-sm"
+              style={{ color: sColor, borderColor: pColor, backgroundColor: pColor }}
             >
               ${Number(item.price).toFixed(2)}
             </span>
             {isAvailable && (
               <button 
                 onClick={handleAddToCart}
-                className="p-1 rounded-full border transition-all hover:scale-110"
-                style={{ color: sColor, backgroundColor: pColor, borderColor: pColor }}
+                className="p-1.5 rounded-full border transition-all transform hover:scale-110 hover:rotate-90 active:scale-95 shadow-md"
+                style={{ color: pColor, backgroundColor: sColor, borderColor: `${pColor}40` }}
                 aria-label="Add to cart"
               >
-                <Plus size={14} strokeWidth={2.5} />
+                <Plus size={16} strokeWidth={3} />
               </button>
             )}
           </div>
@@ -144,9 +165,9 @@ function MenuItem({
 
         {/* Description */}
         {item.description && (
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col gap-1 mt-0.5">
             <p
-              className={`text-[0.8rem] leading-[1.75] transition-all duration-300 opacity-80 ${
+              className={`text-[0.85rem] leading-[1.6] transition-all duration-300 opacity-75 font-sans ${
                 !expanded && isLong ? "line-clamp-2" : ""
               }`}
               style={{ color: pColor }}
@@ -156,13 +177,13 @@ function MenuItem({
             {isLong && (
               <button
                 onClick={() => setExpanded(!expanded)}
-                className="self-start flex items-center gap-0.5 text-[0.72rem] italic hover:underline transition-colors opacity-80"
+                className="self-start flex items-center gap-1 text-[0.75rem] font-medium hover:underline transition-colors opacity-70 mt-1"
                 style={{ color: pColor }}
               >
                 {expanded ? "Show less" : "Read more"}
                 <ChevronDown
-                  size={12}
-                  className={`transition-transform duration-200 ${
+                  size={14}
+                  className={`transition-transform duration-300 ${
                     expanded ? "rotate-180" : "rotate-0"
                   }`}
                 />
@@ -285,21 +306,38 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
 
   return (
     <div
-      className="relative w-full rounded-2xl border shadow-xl overflow-hidden overflow-y-auto"
-      style={{ backgroundColor: sColor, color: pColor, borderColor: pColor, scrollBehavior: 'smooth' }}
+      className="relative w-full rounded-[2rem] border shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden overflow-y-auto isolate"
+      style={{ backgroundColor: sColor, color: pColor, borderColor: `${pColor}20`, scrollBehavior: 'smooth' }}
     >
+      {/* Artistic Dynamic Backgrounds */}
+      <div 
+        className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] opacity-[0.04] pointer-events-none rounded-full blur-[80px]"
+        style={{ backgroundColor: pColor }}
+      />
+      <div 
+        className="absolute bottom-[20%] left-[-10%] w-[400px] h-[400px] opacity-[0.03] pointer-events-none rounded-full blur-[100px]"
+        style={{ backgroundColor: pColor }}
+      />
+
       {/* ── Header ── */}
-      <header className="relative z-10 flex flex-col items-center text-center pt-12 pb-7 px-6 gap-2.5">
+      <header className="relative z-10 flex flex-col items-center text-center pt-16 pb-10 px-6 gap-3">
         {/* Logo */}
-        <div className="relative mb-2">
-          <div className="relative z-10 w-[100px] h-[100px] rounded-full overflow-hidden border-[2px] shadow-lg" style={{ borderColor: pColor, backgroundColor: sColor }}>
+        <div className="relative mb-4 group">
+          <div 
+            className="absolute -inset-6 opacity-10 group-hover:opacity-30 transition-opacity duration-700 blur-2xl rounded-full"
+            style={{ backgroundColor: pColor }}
+          />
+          <div 
+            className="relative z-10 w-[110px] h-[110px] sm:w-[120px] sm:h-[120px] rounded-full overflow-hidden border-[3px] shadow-2xl transform transition-transform duration-500 group-hover:scale-105" 
+            style={{ borderColor: `${pColor}80`, backgroundColor: sColor }}
+          >
             {restaurant.photoURL ? (
               <Image
                 src={restaurant.photoURL}
                 alt={`${restaurant.name} logo`}
                 className="w-full h-full object-cover"
-                width={100}
-                height={100}
+                width={120}
+                height={120}
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center opacity-40" style={{ color: pColor }}>
@@ -311,43 +349,44 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
 
         {/* Name */}
         <h1
-          className="font-serif font-bold text-[clamp(1.75rem,5vw,2.5rem)] leading-tight tracking-wide"
-          style={{ color: pColor }}
+          className="font-serif font-black text-[clamp(2rem,6vw,3rem)] leading-tight tracking-wider uppercase"
+          style={{ color: pColor, textShadow: `0 4px 20px ${pColor}20` }}
         >
           {restaurant.name}
         </h1>
 
         {/* Live badge */}
         <div
-          className="flex items-center gap-2 font-mono text-[0.66rem] uppercase tracking-[0.13em]"
+          className="flex items-center gap-2 font-mono text-[0.7rem] uppercase tracking-[0.2em] font-semibold mt-1"
           style={{ color: pColor }}
         >
           <span
-            className="w-[7px] h-[7px] rounded-full animate-pulse"
-            style={{ backgroundColor: pColor }}
+            className="w-2 h-2 rounded-full animate-pulse shadow-sm"
+            style={{ backgroundColor: pColor, boxShadow: `0 0 10px ${pColor}` }}
           />
           Live Menu
         </div>
 
         {/* Category nav */}
         {filledCats.length > 1 && (
-          <nav className="flex flex-wrap justify-center gap-2 mt-4 w-full max-w-sm">
+          <nav className="flex flex-wrap justify-center gap-2.5 mt-6 w-full max-w-lg">
             {filledCats.map((cat: MenuCategory, idx: number) => (
               <a
                 key={idx}
                 href={`#cat-${idx}`}
-                className="px-4 py-1.5 rounded-full border text-[0.75rem] font-bold whitespace-nowrap transition-all duration-200"
+                className="px-5 py-2 rounded-full border text-[0.8rem] font-bold whitespace-nowrap transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-0.5"
                 style={{ 
                   color: pColor, 
-                  borderColor: pColor,
-                  backgroundColor: sColor
+                  borderColor: `${pColor}40`,
+                  backgroundColor: `${sColor}E6`,
+                  backdropFilter: 'blur(4px)'
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = pColor;
                   e.currentTarget.style.color = sColor;
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = sColor;
+                  e.currentTarget.style.backgroundColor = `${sColor}E6`;
                   e.currentTarget.style.color = pColor;
                 }}
               >
@@ -359,8 +398,8 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
       </header>
 
       {/* Ornamental divider */}
-      <div className="relative z-10 flex items-center justify-center opacity-30 px-8 mb-4">
-         <span style={{ color: pColor }} className="text-xl">--- ✦ ---</span>
+      <div className="relative z-10 flex items-center justify-center opacity-40 px-8 mb-8 pb-4">
+         <span style={{ color: pColor }} className="text-2xl font-light tracking-[0.5em]">◇ ◈ ◇</span>
       </div>
 
       {/* ── Menu sections ── */}
@@ -371,20 +410,17 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
           </p>
         ) : (
           filledCats.map((cat: MenuCategory, catIdx: number) => (
-            <section key={catIdx} id={`cat-${catIdx}`} className="scroll-mt-4">
+            <section key={catIdx} id={`cat-${catIdx}`} className="scroll-mt-6">
               {/* Category heading */}
-              <div className="flex items-center justify-center gap-3 mb-5 opacity-80" style={{ color: pColor }}>
-                <span className="text-[0.48rem] leading-none">
-                  ✦
-                </span>
+              <div className="flex items-center justify-center gap-4 mb-8" style={{ color: pColor }}>
+                <div className="h-[2px] w-12 rounded-full opacity-30" style={{ backgroundColor: pColor }} />
                 <h2
-                  className="font-serif text-xl md:text-[1.35rem] font-bold italic tracking-wide"
+                  className="font-serif text-2xl md:text-[1.85rem] font-black tracking-widest uppercase"
+                  style={{ textShadow: `0 2px 10px ${pColor}10` }}
                 >
                   {cat.category}
                 </h2>
-                <span className="text-[0.48rem] leading-none">
-                  ✦
-                </span>
+                <div className="h-[2px] w-12 rounded-full opacity-30" style={{ backgroundColor: pColor }} />
               </div>
 
               {/* Items list */}
@@ -413,20 +449,23 @@ export default function MenuPreview({ restaurantName }: MenuPreviewProps) {
 
       {/* Floating View Cart / Orders Button */}
       {cartItemCount > 0 && (
-        <div className="fixed bottom-6 w-full max-w-2xl mx-auto left-0 right-0 z-50 px-4 pointer-events-none flex justify-center">
+        <div className="fixed bottom-6 w-full max-w-2xl mx-auto left-0 right-0 z-50 px-4 flex justify-center pointer-events-none">
           <Link
             href={`/orders?restrauntName=${encodeURIComponent(restaurantName || "")}`}
-            className="pointer-events-auto flex items-center justify-between gap-4 py-3.5 px-6 rounded-full shadow-2xl hover:-translate-y-1 transition-all duration-300 w-full md:w-auto"
-            style={{ backgroundColor: pColor, color: sColor, border: `1px solid ${sColor}` }}
+            className="pointer-events-auto relative overflow-hidden group flex items-center justify-between gap-4 py-4 px-8 rounded-full shadow-[0_10px_40px_rgba(0,0,0,0.2)] hover:-translate-y-1.5 transition-all duration-500 w-full md:w-auto"
+            style={{ backgroundColor: pColor, color: sColor, border: `2px solid ${sColor}40` }}
           >
-            <div className="flex items-center gap-3">
+             {/* Hover shine effect */}
+            <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 transition-transform duration-1000 ease-in-out" />
+            
+            <div className="flex items-center gap-3 relative z-10">
               <div className="relative">
-                <ShoppingCart size={22} />
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[0.6rem] font-bold w-4 h-4 flex items-center justify-center rounded-full">
+                <ShoppingCart size={24} className="group-hover:scale-110 transition-transform duration-300" />
+                <span className="absolute -top-2.5 -right-2.5 bg-red-500 text-white text-[0.65rem] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-md border-2 border-[transparent]" style={{ borderColor: pColor }}>
                   {cartItemCount}
                 </span>
               </div>
-              <span className="font-serif font-bold text-sm tracking-wide">My Orders</span>
+              <span className="font-serif font-bold text-[0.95rem] tracking-wider uppercase">My Orders</span>
             </div>
             
             <span className="font-mono font-medium text-sm">
