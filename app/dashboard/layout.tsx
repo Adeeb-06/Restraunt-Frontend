@@ -32,12 +32,12 @@ export default function DashboardLayout({
   if (!firebaseUser) return null;
 
   return (
-    <div className="flex h-screen bg-[#050505] overflow-hidden">
+    <div className="flex flex-col md:flex-row h-[100dvh] bg-[#050505] overflow-hidden relative">
       <Sidebar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="p-8 max-w-[1600px] mx-auto">
-           <div className="mb-8">
-              <h1 className="text-3xl font-bold font-serif text-white">
+      <main className="flex-1 overflow-y-auto custom-scrollbar pb-16 md:pb-0">
+        <div className="p-4 sm:p-8 max-w-[1600px] mx-auto">
+           <div className="mb-6 sm:mb-8">
+              <h1 className="text-2xl sm:text-3xl font-bold font-serif text-white">
                 Welcome back, <span className="text-[#e8845c]">{dbUser?.restrauntName || "Chef"}</span>
               </h1>
               <p className="text-zinc-400 text-sm mt-1">
