@@ -93,15 +93,15 @@ export default function Navbar() {
                   onClick={() => setUserMenuOpen((v) => !v)}
                   aria-expanded={userMenuOpen}
                 >
-                  {firebaseUser.photoURL ? (
-                    <img src={firebaseUser.photoURL} alt="User" className="w-7 h-7 rounded-full object-cover shadow-sm" />
+                  {dbUser?.photoURL ? (
+                    <Image width={120} height={120} src={dbUser.photoURL} alt="User" className="w-7 h-7 rounded-full object-cover shadow-sm" />
                   ) : (
                     <div className="w-7 h-7 rounded-full bg-zinc-200 border border-zinc-300 flex items-center justify-center text-xs font-bold text-zinc-600">
                       {initials}
                     </div>
                   )}
                   <span className="text-sm font-medium text-zinc-800 hidden sm:block">
-                    {firebaseUser.displayName?.split(" ")[0] ?? "Account"}
+                    {dbUser?.restrauntName?.split(" ")[0] ?? "Account"}
                   </span>
                   <svg
                     className={`text-zinc-500 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}
