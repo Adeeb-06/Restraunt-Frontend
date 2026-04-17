@@ -68,7 +68,7 @@ export default function Navbar() {
           {/* Brand */}
           <Link href="/" className="flex items-center  group" onClick={() => setMobileOpen(false)}>
             <div className="w-16 h-16 relative flex items-center justify-center group-hover:scale-105 transition-transform drop-shadow-sm">
-              <Image width={120} height={120} src="/scanlylogo.png" alt="Scanly Logo" className="w-full h-full object-contain" />
+              <Image width={120} height={120} src="/scanlyLogo.png" alt="Scanly Logo" className="w-full h-full object-contain" />
             </div>
             <span className="font-sans text-2xl font-black text-zinc-900 tracking-tight">Scanly</span>
           </Link>
